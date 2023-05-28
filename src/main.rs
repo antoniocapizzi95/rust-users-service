@@ -1,14 +1,26 @@
 mod routes;
 mod models;
+mod repository;
+mod utils;
 
+use std::env;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::web::Data;
+use mongodb::Client;
+use mongodb::options::ClientOptions;
+use crate::models::User;
+use crate::repository::user_repository_mongo::UserRepository;
 
 use crate::routes::{create_user, delete_user, get_user, get_users, update_user};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let db = UserRepository::init().await;
+    let db_data = Data::new(db);
+
+    HttpServer::new(move || {
         App::new()
+            .app_data(db_data.clone())
             .service(get_user)
             .service(get_users)
             .service(create_user)

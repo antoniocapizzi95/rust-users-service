@@ -3,16 +3,16 @@ use actix_web::web::Path;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{User};
+use crate::repository::user_repository_mongo::UserRepository;
 
 #[get("/users/{id}")]
-pub async fn get_user(path: Path<String>) -> HttpResponse {
+pub async fn get_user(path: web::Path<String>, repository: web::Data<UserRepository>) -> impl Responder {
     let id = path.into_inner();
-    HttpResponse::Ok().json(User {
-        id,
-        name: String::from("Bob"),
-        surname: String::from("Ross"),
-        city: String::from("Florida"),
-    })
+    if let Some(user) = repository.get_user(&id).await {
+        HttpResponse::Ok().json(user)
+    } else {
+        HttpResponse::NotFound().finish()
+    }
 }
 
 #[get("/users")]
@@ -33,8 +33,9 @@ pub async fn get_users() -> HttpResponse {
 }
 
 #[post("/users")]
-pub async fn create_user(user: web::Json<User>) -> HttpResponse {
-    HttpResponse::Created().json(user.0)
+pub async fn create_user(user: web::Json<User>, repository: web::Data<UserRepository>) -> HttpResponse {
+    let res = repository.create_user(user.into_inner()).await;
+    HttpResponse::Created().json(res.unwrap())
 }
 
 #[put("/users/{id}")]
