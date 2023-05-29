@@ -1,3 +1,4 @@
+use std::env;
 use dotenv::dotenv;
 use futures::StreamExt;
 use mongodb::{bson::doc, Client, Collection};
@@ -12,12 +13,11 @@ pub struct UserRepository {
 
 impl UserRepository {
     pub async fn init() -> Self {
-        /*dotenv().ok();
+        dotenv().ok();
         let uri = match env::var("MONGOURI") {
             Ok(v) => v.to_string(),
             Err(_) => format!("Error loading env variable"),
-        };*/
-        let uri = "mongodb://localhost:27017";
+        };
         let client = Client::with_uri_str(uri).await.unwrap();
         let db = client.database("rustDB");
         let col: Collection<User> = db.collection("User");
