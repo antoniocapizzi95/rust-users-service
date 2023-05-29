@@ -3,7 +3,6 @@ use dotenv::dotenv;
 use futures::StreamExt;
 use mongodb::{bson::doc, Client, Collection};
 use crate::models::User;
-use crate::utils::generate_random_string;
 use anyhow::Result;
 
 pub struct UserRepository {
@@ -30,7 +29,7 @@ impl UserRepository {
 
     pub async fn create_user(&self, new_user: User) -> Option<User> {
         let user = User {
-            id: generate_random_string(10),
+            id: new_user.id,
             name: new_user.name,
             surname: new_user.surname,
             city: new_user.city

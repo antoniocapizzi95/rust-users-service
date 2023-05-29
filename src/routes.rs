@@ -3,6 +3,7 @@ use actix_web::web::Path;
 
 use crate::models::{User};
 use crate::repository::user_repository_mongo::UserRepository;
+use crate::utils::generate_random_string;
 
 #[get("/users/{id}")]
 pub async fn get_user(path: Path<String>, repository: web::Data<UserRepository>) -> impl Responder {
@@ -22,7 +23,9 @@ pub async fn get_users(repository: web::Data<UserRepository>) -> HttpResponse {
 
 #[post("/users")]
 pub async fn create_user(user: web::Json<User>, repository: web::Data<UserRepository>) -> HttpResponse {
-    let res = repository.create_user(user.into_inner()).await;
+    let mut new_user = user.into_inner();
+    new_user.id = generate_random_string(20);
+    let res = repository.create_user(new_user).await;
     HttpResponse::Created().json(res.unwrap())
 }
 
