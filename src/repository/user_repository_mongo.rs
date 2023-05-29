@@ -2,7 +2,6 @@ use std::env;
 use dotenv::dotenv;
 use futures::StreamExt;
 use mongodb::{bson::doc, Client, Collection};
-use mongodb::results::{DeleteResult};
 use crate::models::User;
 use crate::utils::generate_random_string;
 use anyhow::Result;
@@ -71,10 +70,10 @@ impl UserRepository {
         }
     }
 
-    pub async fn delete_user(&self, user_id: &str) -> Result<DeleteResult, anyhow::Error> {
+    pub async fn delete_user(&self, user_id: &str) -> Result<bool, anyhow::Error> {
         let filter = doc! { "id": user_id };
         let result = self.collection.delete_one(filter, None).await?;
-        Ok(result)
+        Ok(result.deleted_count > 0)
     }
 
 }
