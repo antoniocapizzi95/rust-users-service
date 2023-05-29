@@ -3,12 +3,8 @@ mod models;
 mod repository;
 mod utils;
 
-use std::env;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{App, HttpServer};
 use actix_web::web::Data;
-use mongodb::Client;
-use mongodb::options::ClientOptions;
-use crate::models::User;
 use crate::repository::user_repository_mongo::UserRepository;
 
 use crate::routes::{create_user, delete_user, get_user, get_users, update_user};

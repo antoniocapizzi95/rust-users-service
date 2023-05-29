@@ -1,4 +1,3 @@
-use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 
 pub fn generate_random_string(length: usize) -> String {
