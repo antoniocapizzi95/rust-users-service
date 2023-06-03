@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use mongodb::{bson::doc, Client, Collection};
+use mongodb::{bson::doc, Collection};
 use crate::models::user_model::User;
 use anyhow::Result;
 use crate::repository::user_repository::UserRepository;
