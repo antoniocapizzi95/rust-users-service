@@ -1,33 +1,23 @@
-use std::env;
-use dotenv::dotenv;
 use futures::StreamExt;
 use mongodb::{bson::doc, Client, Collection};
 use crate::models::user_model::User;
 use anyhow::Result;
+use crate::repository::user_repository::UserRepository;
+use async_trait::async_trait;
 
-pub struct UserRepository {
-    collection: Collection<User>,
+pub struct UserRepositoryMongo {
+    pub collection: Collection<User>,
 }
 
-impl UserRepository {
-    pub async fn init() -> Self {
-        dotenv().ok();
-        let uri = match env::var("MONGOURI") {
-            Ok(v) => v.to_string(),
-            Err(_) => format!("Error loading env variable"),
-        };
-        let client = Client::with_uri_str(uri).await.unwrap();
-        let db = client.database("rustDB");
-        let col: Collection<User> = db.collection("User");
-        UserRepository { collection: col }
-    }
+#[async_trait]
+impl UserRepository for UserRepositoryMongo {
 
-    pub async fn get_user(&self, user_id: &str) -> Option<User> {
+    async fn get_user(&self, user_id: &str) -> Option<User> {
         let filter = doc! { "id": user_id };
         self.collection.find_one(filter, None).await.unwrap()
     }
 
-    pub async fn create_user(&self, new_user: User) -> Option<User> {
+    async fn create_user(&self, new_user: User) -> Option<User> {
         let user = User {
             id: new_user.id,
             name: new_user.name,
@@ -41,7 +31,7 @@ impl UserRepository {
         }
     }
 
-    pub async fn get_users(&self) -> Vec<User> {
+    async fn get_users(&self) -> Vec<User> {
         let mut cursor = self.collection.find(None, None).await.unwrap();
         let mut users = Vec::new();
         while let Some(user) = cursor.next().await {
@@ -50,7 +40,7 @@ impl UserRepository {
         return users;
     }
 
-    pub async fn update_user(&self, user_id: &str, new_user_data: User) -> Option<User> {
+    async fn update_user(&self, user_id: &str, new_user_data: User) -> Option<User> {
         let filter = doc! { "id": user_id };
         let update = doc! {
         "$set": {
@@ -69,7 +59,7 @@ impl UserRepository {
         }
     }
 
-    pub async fn delete_user(&self, user_id: &str) -> Result<bool, anyhow::Error> {
+    async fn delete_user(&self, user_id: &str) -> Result<bool, anyhow::Error> {
         let filter = doc! { "id": user_id };
         let result = self.collection.delete_one(filter, None).await?;
         Ok(result.deleted_count > 0)
