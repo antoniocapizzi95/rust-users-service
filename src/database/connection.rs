@@ -1,6 +1,6 @@
 use std::env;
 use dotenv::dotenv;
-use mongodb::{bson::doc, Client, Collection};
+use mongodb::{Client};
 
 pub async fn connection_mongo() -> mongodb::Database {
     dotenv().ok();

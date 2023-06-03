@@ -8,7 +8,7 @@ use actix_web::{App, HttpServer};
 use actix_web::web::Data;
 use crate::repository::user_repository_mongo::UserRepositoryMongo;
 
-use crate::api::routes::{create_user, delete_user, get_user, get_users, update_user};
+use crate::api::user_routes::{create_user, delete_user, get_user, get_users, update_user};
 use crate::database::connection::connection_mongo;
 use crate::repository::user_repository::UserRepository;
 
