@@ -1,9 +1,9 @@
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use actix_web::web::Path;
 
-use crate::models::{User};
+use crate::models::user_model::{User};
 use crate::repository::user_repository_mongo::UserRepository;
-use crate::utils::generate_random_string;
+use crate::utils::generate_random_string::generate_random_string;
 
 #[get("/users/{id}")]
 pub async fn get_user(path: Path<String>, repository: web::Data<UserRepository>) -> impl Responder {

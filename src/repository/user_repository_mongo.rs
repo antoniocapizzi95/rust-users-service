@@ -2,7 +2,7 @@ use std::env;
 use dotenv::dotenv;
 use futures::StreamExt;
 use mongodb::{bson::doc, Client, Collection};
-use crate::models::User;
+use crate::models::user_model::User;
 use anyhow::Result;
 
 pub struct UserRepository {
